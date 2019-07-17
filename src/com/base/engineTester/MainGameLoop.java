@@ -19,9 +19,8 @@ public class MainGameLoop {
         DisplayManager.createDisplay();
 
         Loader loader = new Loader();
-        Renderer renderer = new Renderer();
         StaticShader shader = new StaticShader();
-
+        Renderer renderer = new Renderer(shader);
 
         float[] vertices = { // vbo
 
@@ -48,14 +47,12 @@ public class MainGameLoop {
         RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
         ModelTexture texture = new ModelTexture(loader.loadTexture("image"));
         TexturedModel texturedModel = new TexturedModel(model, texture);
-        Entity entity = new Entity(texturedModel, new Vector3f(-1,0,0),0,0,0,1);
+        Entity entity = new Entity(texturedModel, new Vector3f(0,0,-1),0,0,0,1);  // warning, do not set the z value to 0 or else the image texture will not be rendered inside the viewing plane because the projectionMatrix has been initialized.
 
         while(!Display.isCloseRequested()) {
-            entity.increasePosition(0.002f, 0, 0);
-            entity.increaseRotation(0,1,0);
+            entity.increasePosition(0, 0, -0.1f);
             renderer.prepare();
             //game logic
-
             shader.start();
             renderer.render(entity, shader);
             shader.stop();
