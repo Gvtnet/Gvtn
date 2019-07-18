@@ -3,6 +3,7 @@ package engineTester;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Camera;
 import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
@@ -48,12 +49,15 @@ public class MainGameLoop {
         ModelTexture texture = new ModelTexture(loader.loadTexture("image"));
         TexturedModel texturedModel = new TexturedModel(model, texture);
         Entity entity = new Entity(texturedModel, new Vector3f(0,0,-1),0,0,0,1);  // warning, do not set the z value to 0 or else the image texture will not be rendered inside the viewing plane because the projectionMatrix has been initialized.
+        Camera camera = new Camera();
 
         while(!Display.isCloseRequested()) {
             entity.increasePosition(0, 0, -0.1f);
+            camera.move();
             renderer.prepare();
             //game logic
             shader.start();
+            shader.loadViewMatrix(camera);
             renderer.render(entity, shader);
             shader.stop();
             DisplayManager.updateDisplay();
