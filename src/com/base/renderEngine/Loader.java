@@ -66,8 +66,7 @@ public class Loader {
 		return vaoID;
 	}
 
-	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data)
-	{
+	private void storeDataInAttributeList(int attributeNumber, int coordinateSize,float[] data){
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
