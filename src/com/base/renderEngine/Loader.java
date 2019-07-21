@@ -1,11 +1,10 @@
 package renderEngine;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -19,9 +18,9 @@ import models.RawModel;
 
 public class Loader {
 
-	private ArrayList<Integer> vaos = new ArrayList<Integer>();
-	private ArrayList<Integer> vbos = new ArrayList<Integer>();
-	private ArrayList<Integer> textures = new ArrayList<Integer>();
+	private List<Integer> vaos = new ArrayList<Integer>();
+	private List<Integer> vbos = new ArrayList<Integer>();
+	private List<Integer> textures = new ArrayList<Integer>();
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
 
@@ -32,20 +31,21 @@ public class Loader {
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
 	}
+
 	public int loadTexture(String fileName){
 		Texture texture = null;
 		try{
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/"+fileName+".png"));
-		} catch (FileNotFoundException e) {
+			texture = TextureLoader.getTexture("PNG",
+					new FileInputStream("res/" + fileName + ".png"));
+		} catch (Exception e) {
 			e.printStackTrace();
-
-		} catch (IOException e){
-			e.printStackTrace();
+			System.err.println("Tried to load texture " + fileName + ".png , didn't work");
+			System.exit(-1);
 		}
-		int textureID = texture.getTextureID();
-		textures.add(textureID);
-		return textureID;
+		textures.add(texture.getTextureID());
+		return texture.getTextureID();
 	}
+
 	public void cleanUp(){
 		for(int vao:vaos){
 			GL30.glDeleteVertexArrays(vao);
