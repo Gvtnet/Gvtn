@@ -2,13 +2,13 @@ package textures;
 
 public class ModelTexture {
 
-	private int textureID;
+    private int textureID;
 
-	public ModelTexture(int texture){
-		this.textureID = texture;
-	}
+    public ModelTexture(int texture){
+        this.textureID = texture;
+    }
 
-	public int getID(){
-		return textureID;
-	}
+    public int getID(){
+        return textureID;
+    }
 }
