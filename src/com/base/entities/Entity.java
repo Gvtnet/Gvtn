@@ -2,7 +2,6 @@ package entities;
 
 import models.TexturedModel;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Entity {
@@ -20,22 +19,6 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-	}
-
-	// I added this function, it does not exist in the tutorial
-	public void move(){
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)){
-			setRotZ(rotZ+2.2f);
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)){
-			setRotZ(rotZ-2.2f);
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)){
-			setRotY(rotY-2.2f);
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-			setRotY(rotY+2.2f);
-		}
 	}
 	public void increasePosition(float dx, float dy, float dz){
 		this.position.x += dx;

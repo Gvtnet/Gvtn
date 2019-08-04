@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -34,7 +35,6 @@ public class MainGameLoop {
         TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
 
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
         Terrain terrain = new Terrain(0,0,loader, texturePack, blendMap);
         Terrain terrain2 = new Terrain(1,0,loader,texturePack, blendMap);
@@ -89,50 +89,65 @@ public class MainGameLoop {
                 y = 0;
                 entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
             }
-        }
 
-        TexturedModel staticModel;
+			/*if (i % 3 == 0) {
+				float x = random.nextFloat() * 800 - 400;
+				float z = random.nextFloat() * -600;
+				float y = 0;
+				entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, random.nextFloat() * 0.1f + 0.6f));
 
-        staticModel = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader),new ModelTexture(loader.loadTexture("grassTexture")));
-        staticModel.getTexture().setShineDamper(10);
-        staticModel.getTexture().setReflectivity(1);
-        staticModel.getTexture().setHasTransparency(true);
-        staticModel.getTexture().setUseFakeLighting(true);
-        for (int i = 0; i < 200; i++){
-            entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
+				x = random.nextFloat() * 800 - 400;
+				z = random.nextFloat() * -600;
+				y = 0;
+				entities.add(new Entity(lamp, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
+			}*/
         }
-        staticModel = new TexturedModel(OBJLoader.loadObjModel("fern", loader),new ModelTexture(loader.loadTexture("fern")));
-        staticModel.getTexture().setShineDamper(10);
-        staticModel.getTexture().setReflectivity(1);
-        staticModel.getTexture().setHasTransparency(true);
-        staticModel.getTexture().setUseFakeLighting(true);
-        for (int i = 0; i < 50; i++){
-            entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
-        }
-        staticModel = new TexturedModel(OBJLoader.loadObjModel("mytree", loader),new ModelTexture(loader.loadTexture("tree")));
-        staticModel.getTexture().setShineDamper(10);
-        staticModel.getTexture().setReflectivity(1);
-        for (int i = 0; i < 200; i++){
-            entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,9));
-        }
+/*
+		TexturedModel staticModel;
 
+		staticModel = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader),new ModelTexture(loader.loadTexture("grassTexture")));
+		staticModel.getTexture().setShineDamper(10);
+		staticModel.getTexture().setReflectivity(1);
+		staticModel.getTexture().setHasTransparency(true);
+		staticModel.getTexture().setUseFakeLighting(true);
+		for (int i = 0; i < 200; i++){
+			//entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
+		}
+		staticModel = new TexturedModel(OBJLoader.loadObjModel("fern", loader),new ModelTexture(loader.loadTexture("fern")));
+		staticModel.getTexture().setShineDamper(10);
+		staticModel.getTexture().setReflectivity(1);
+		staticModel.getTexture().setHasTransparency(true);
+		staticModel.getTexture().setUseFakeLighting(true);
+		for (int i = 0; i < 50; i++){
+			//entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
+		}
+		staticModel = new TexturedModel(OBJLoader.loadObjModel("mytree", loader),new ModelTexture(loader.loadTexture("tree")));
+		staticModel.getTexture().setShineDamper(10);
+		staticModel.getTexture().setReflectivity(1);
+		for (int i = 0; i < 200; i++){
+			entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,9));
+		}
+*/
 
         Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));
 
-
         Camera camera = new Camera();
 
+        TexturedModel stanfordBunny = new TexturedModel(OBJLoader.loadObjModel("stanfordBunny",  loader), new ModelTexture(loader.loadTexture("white")));
+
+        Player player = new Player(stanfordBunny, new Vector3f(0,0,-100), 0,0,0,1);
 
         MasterRenderer renderer = new MasterRenderer();
 
         while(!Display.isCloseRequested()) {
             camera.move();
+            player.move();
+            renderer.processEntity(player);
             renderer.processTerrain(terrain);
             renderer.processTerrain(terrain2);
 
             for (Entity entity : entities){
                 //entity.increaseRotation(0, 1, 0);
-                entity.move();// I added this function, it does not exist in the tutorial
                 renderer.processEntity(entity);
             }
             renderer.render(light, camera);
