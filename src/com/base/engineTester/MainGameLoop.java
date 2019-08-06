@@ -53,9 +53,13 @@ public class MainGameLoop {
 
         grass.getTexture().setHasTransparency(true);
         grass.getTexture().setUseFakeLighting(true);
+        grass.getTexture().setReflectivity(0);
         flower.getTexture().setHasTransparency(true);
         flower.getTexture().setUseFakeLighting(true);
+        flower.getTexture().setReflectivity(0);
         fern.getTexture().setHasTransparency(true);
+        fern.getTexture().setUseFakeLighting(true);
+        fern.getTexture().setReflectivity(0);
 
         List<Entity> entities = new ArrayList<Entity>();
         Random random = new Random();
@@ -131,11 +135,11 @@ public class MainGameLoop {
 
         Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));
 
-        Camera camera = new Camera();
 
-        TexturedModel stanfordBunny = new TexturedModel(OBJLoader.loadObjModel("stanfordBunny",  loader), new ModelTexture(loader.loadTexture("white")));
+        TexturedModel stanfordBunny = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
 
-        Player player = new Player(stanfordBunny, new Vector3f(0,0,-100), 0,0,0,1);
+        Player player = new Player(stanfordBunny, new Vector3f(100,0,-50), 0,0,0,1);
+        Camera camera = new Camera(player);
 
         MasterRenderer renderer = new MasterRenderer();
 
