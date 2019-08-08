@@ -29,10 +29,10 @@ public class MainGameLoop {
         Loader loader = new Loader();
 
         // *********TERRAIN TEXTURE STUFF***********
-        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy3"));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
-        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("mossPath256"));
 
         TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
         TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
@@ -43,13 +43,14 @@ public class MainGameLoop {
         TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
         TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
         TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
+        TexturedModel box = new TexturedModel(OBJLoader.loadObjModel("box", loader), new ModelTexture(loader.loadTexture("box")));
+        TexturedModel mytree = new TexturedModel(OBJLoader.loadObjModel("mytree", loader), new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
+        //TexturedModel lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 
         ModelTexture fernTexture = new ModelTexture(loader.loadTexture("fern"));
-
         TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), fernTexture);
 
-        TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
-        TexturedModel lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 
         grass.getTexture().setHasTransparency(true);
         grass.getTexture().setUseFakeLighting(true);
@@ -64,21 +65,18 @@ public class MainGameLoop {
         List<Entity> entities = new ArrayList<Entity>();
         Random random = new Random();
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 100; i++) {
             if (i % 7 == 0) {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
                 float y = 0;
-                entities.add(new Entity(fern, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
 
-                x = random.nextFloat() * 800 - 400;
-                z = random.nextFloat() * -600;
-                y = 0;
+                entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
+
+                entities.add(new Entity(fern, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 1.5f));
+
                 entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 1.8f));
 
-                x = random.nextFloat() * 800 - 400;
-                z = random.nextFloat() * -600;
-                y = 0;
                 entities.add(new Entity(flower, new Vector3f(x, y, z), 0, 0, 0, 2.3f));
             }
 
@@ -86,61 +84,26 @@ public class MainGameLoop {
                 float x = random.nextFloat() * 800 - 400;
                 float z = random.nextFloat() * -600;
                 float y = 0;
-                entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, random.nextFloat() * 0.1f + 0.6f));
 
                 x = random.nextFloat() * 800 - 400;
                 z = random.nextFloat() * -600;
                 y = 0;
+
                 entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
+
+                x = random.nextFloat() * 800 - 400;
+                z = random.nextFloat() * -600;
+                y = 5;
+                entities.add(new Entity(box, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
             }
-
-			/*if (i % 3 == 0) {
-				float x = random.nextFloat() * 800 - 400;
-				float z = random.nextFloat() * -600;
-				float y = 0;
-				entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, random.nextFloat() * 0.1f + 0.6f));
-
-				x = random.nextFloat() * 800 - 400;
-				z = random.nextFloat() * -600;
-				y = 0;
-				entities.add(new Entity(lamp, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
-			}*/
         }
-/*
-		TexturedModel staticModel;
-
-		staticModel = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader),new ModelTexture(loader.loadTexture("grassTexture")));
-		staticModel.getTexture().setShineDamper(10);
-		staticModel.getTexture().setReflectivity(1);
-		staticModel.getTexture().setHasTransparency(true);
-		staticModel.getTexture().setUseFakeLighting(true);
-		for (int i = 0; i < 200; i++){
-			//entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,3));
-		}
-		staticModel = new TexturedModel(OBJLoader.loadObjModel("fern", loader),new ModelTexture(loader.loadTexture("fern")));
-		staticModel.getTexture().setShineDamper(10);
-		staticModel.getTexture().setReflectivity(1);
-		staticModel.getTexture().setHasTransparency(true);
-		staticModel.getTexture().setUseFakeLighting(true);
-		for (int i = 0; i < 50; i++){
-			//entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,1));
-		}
-		staticModel = new TexturedModel(OBJLoader.loadObjModel("mytree", loader),new ModelTexture(loader.loadTexture("tree")));
-		staticModel.getTexture().setShineDamper(10);
-		staticModel.getTexture().setReflectivity(1);
-		for (int i = 0; i < 200; i++){
-			entities.add(new Entity(staticModel, new Vector3f(random.nextFloat()*800 - 400,0,random.nextFloat() * -600),0,0,0,9));
-		}
-*/
 
         Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));
 
+        TexturedModel avatar = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
 
-        TexturedModel stanfordBunny = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
-
-        Player player = new Player(stanfordBunny, new Vector3f(100,0,-50), 0,0,0,1);
+        Player player = new Player(avatar, new Vector3f(100,0,-50), 0,180,0,1);
         Camera camera = new Camera(player);
-
         MasterRenderer renderer = new MasterRenderer();
 
         while(!Display.isCloseRequested()) {
