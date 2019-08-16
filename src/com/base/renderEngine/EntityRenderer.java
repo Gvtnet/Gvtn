@@ -50,6 +50,7 @@ public class EntityRenderer {
 		if(texture.isHasTransparency()){
 			MasterRenderer.disableCulling();
 		}
+		shader.loadNumberOfRows(texture.getNumberOfRows());
 		shader.loadFakeLightingVariable(texture.isUseFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity() );
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -67,5 +68,6 @@ public class EntityRenderer {
 	private void prepareInstance(Entity entity){
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);
+		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 }

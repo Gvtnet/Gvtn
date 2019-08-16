@@ -1,87 +1,132 @@
-package entities;
+package engineTester;
 
-import org.lwjgl.input.Mouse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-public class Camera {
+import entities.Camera;
+import entities.Entity;
+import entities.Light;
+import entities.Player;
+import models.TexturedModel;
+import renderEngine.DisplayManager;
+import renderEngine.Loader;
+import renderEngine.MasterRenderer;
+import renderEngine.OBJLoader;
+import terrains.Terrain;
+import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
-    private float distanceFromPlayer = 120;
-    private float angleAroundPlayer = 0;
+public class MainGameLoop {
 
-    private Vector3f position = new Vector3f(0, 50, 0);
-    private float pitch = 20;
-    private float yaw = 0;
-    private float roll;
+    public static void main(String[] args) {
 
-    private Player player;
+        DisplayManager.createDisplay();
+        Loader loader = new Loader();
 
-    public Camera(Player player) {
-        this.player = player;
-    }
+        // *********TERRAIN TEXTURE STUFF***********
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy3"));
+        TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+        TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
+        TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("mossPath256"));
 
-    public void move(){
-        calculateZoom();
-        calculatePitch();
-        calculateAngleAroundPlayer();
-        float horizontalDistance = calculateHorizontalDistance();
-        float verticalDistance = calculateVerticalDistance();
-        calculateCameraPosition(horizontalDistance, verticalDistance);
-        this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
-    }
+        TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+        TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+        Terrain terrain = new Terrain(0,-1,loader, texturePack, blendMap, "heightMap");
+        // *****************************************
 
-    public Vector3f getPosition() {
-        return position;
-    }
+        TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
+        TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
+        TexturedModel box = new TexturedModel(OBJLoader.loadObjModel("box", loader), new ModelTexture(loader.loadTexture("box")));
+        TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
+        //TexturedModel lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 
-    public float getPitch() {
-        return pitch;
-    }
+        ModelTexture fernTexture = new ModelTexture(loader.loadTexture("fern"));
+        fernTexture.setNumberOfRows(2);
+        TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), fernTexture);
 
-    public float getYaw() {
-        return yaw;
-    }
 
-    public float getRoll() {
-        return roll;
-    }
+        grass.getTexture().setHasTransparency(true);
+        grass.getTexture().setUseFakeLighting(true);
+        grass.getTexture().setReflectivity(0);
+        flower.getTexture().setHasTransparency(true);
+        flower.getTexture().setUseFakeLighting(true);
+        flower.getTexture().setReflectivity(0);
+        fern.getTexture().setHasTransparency(true);
+        fern.getTexture().setUseFakeLighting(true);
+        fern.getTexture().setReflectivity(0);
 
-    private void calculateCameraPosition(float horizontalDistance, float verticalDistance) {
-        float theta = player.getRotY() + angleAroundPlayer;
-        float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
-        float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
-        position.x = player.getPosition().x - offsetX;
-        position.z = player.getPosition().z - offsetZ;
-        position.y = player.getPosition().y + verticalDistance+10;
-    }
+        List<Entity> entities = new ArrayList<Entity>();
+        Random random = new Random();
 
-    private float calculateHorizontalDistance(){
-        return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
-    }
+        for (int i = 0; i < 100; i++) {
+            if (i % 7 == 0) {
+                float x = random.nextFloat() * 800;
+                float z = random.nextFloat() * -600;
+                float y = terrain.getHeightOfTerrain(x, z);
 
-    private float calculateVerticalDistance(){
-        return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
-    }
+                entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
 
-    private void calculateZoom(){
-        float zoomLevel = Mouse.getDWheel() * 0.1f;
-        distanceFromPlayer -= zoomLevel;
-        if (distanceFromPlayer < 5)
-            distanceFromPlayer  = 5;
-    }
+                entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x-20, y, z), 0, random.nextFloat() * 360, 0, 1.5f));
 
-    private void calculatePitch(){
-        if (Mouse.isButtonDown(0)){
-            float pitchChange = Mouse.getDY() * 0.1f;
-            pitch -= pitchChange;
-            if (pitch < 0)
-                pitch = 0;
+                entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 1.8f));
+
+                entities.add(new Entity(flower, new Vector3f(x, y, z), 0, 0, 0, 2.3f));
+            }
+
+            if (i % 3 == 0) {
+                float x = random.nextFloat() * 800;
+                float z = random.nextFloat() * -600;
+                float y = terrain.getHeightOfTerrain(x, z);
+
+                x = random.nextFloat() * 800;
+                z = random.nextFloat() * -600;
+                y = terrain.getHeightOfTerrain(x, z);
+
+                entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
+
+                x = random.nextFloat() * 800;
+                z = random.nextFloat() * -600;
+                y = terrain.getHeightOfTerrain(x, z)+5;
+
+                entities.add(new Entity(box, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
+            }
         }
+
+        MasterRenderer renderer = new MasterRenderer();
+
+        Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));
+
+        TexturedModel avatar = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
+
+
+
+        Player player = new Player(avatar, new Vector3f(400,0,-400), 0,180,0,1);
+        Camera camera = new Camera(player);
+
+        while(!Display.isCloseRequested()) {
+            camera.move();
+            player.move(terrain);
+            renderer.processEntity(player);
+            renderer.processTerrain(terrain);
+
+            for (Entity entity : entities){
+                //entity.increaseRotation(0, 1, 0);
+                renderer.processEntity(entity);
+            }
+            renderer.render(light, camera);
+            DisplayManager.updateDisplay();
+        }
+
+        renderer.cleanUp();
+        loader.cleanUp();
+
+        DisplayManager.closeDisplay();
     }
 
-    private void calculateAngleAroundPlayer(){
-        if (Mouse.isButtonDown(0)){
-            float angleChange = Mouse.getDX() * 0.3f;
-            angleAroundPlayer -= angleChange;
-        }
-    }
 }
