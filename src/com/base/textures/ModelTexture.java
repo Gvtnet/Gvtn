@@ -49,6 +49,7 @@ public class ModelTexture {
         this.useFakeLighting = useFakeLighting;
     }
 
+
     public int getNumberOfRows() {
         return numberOfRows;
     }

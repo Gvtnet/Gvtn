@@ -42,7 +42,7 @@ public class MainGameLoop {
         Terrain terrain = new Terrain(0,-1,loader, texturePack, blendMap, "heightMap");
         // *****************************************
 
-        TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree2", loader), new ModelTexture(loader.loadTexture("tree")));
+        TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
         TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
         TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
         TexturedModel box = new TexturedModel(OBJLoader.loadObjModel("box", loader), new ModelTexture(loader.loadTexture("box")));
@@ -54,6 +54,7 @@ public class MainGameLoop {
         TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader), fernTexture);
 
 
+        tree.getTexture().setReflectivity(0);
         grass.getTexture().setHasTransparency(true);
         grass.getTexture().setUseFakeLighting(true);
         grass.getTexture().setReflectivity(0);
@@ -61,7 +62,7 @@ public class MainGameLoop {
         flower.getTexture().setUseFakeLighting(true);
         flower.getTexture().setReflectivity(0);
         fern.getTexture().setHasTransparency(true);
-        fern.getTexture().setUseFakeLighting(true);
+        fern.getTexture().setUseFakeLighting(false);
         fern.getTexture().setReflectivity(0);
 
         List<Entity> entities = new ArrayList<Entity>();
@@ -91,7 +92,7 @@ public class MainGameLoop {
                 z = random.nextFloat() * -600;
                 y = terrain.getHeightOfTerrain(x, z);
 
-                entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 10));
+                entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 1));
 
                 x = random.nextFloat() * 800;
                 z = random.nextFloat() * -600;
@@ -103,7 +104,10 @@ public class MainGameLoop {
 
         MasterRenderer renderer = new MasterRenderer();
 
-        Light light = new Light(new Vector3f(20000, 20000, 2000), new Vector3f(1,1,1));
+        List <Light> lights = new ArrayList<Light>();
+        lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1,1,1)));
+        lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(10,0,0)));
+        lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0,0,10)));
 
         TexturedModel avatar = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
 
@@ -132,7 +136,7 @@ public class MainGameLoop {
             for (Entity entity : entities){
                 renderer.processEntity(entity);
             }
-            renderer.render(light, camera);
+            renderer.render(lights, camera);
             guiRenderer.render(guis);
             DisplayManager.updateDisplay();
         }
