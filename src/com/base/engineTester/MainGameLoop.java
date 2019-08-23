@@ -32,7 +32,7 @@ public class MainGameLoop {
         Loader loader = new Loader();
 
         // *********TERRAIN TEXTURE STUFF***********
-        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy3"));
+        TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
         TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
         TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
         TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("mossPath256"));
@@ -47,7 +47,7 @@ public class MainGameLoop {
         TexturedModel flower = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
         TexturedModel box = new TexturedModel(OBJLoader.loadObjModel("box", loader), new ModelTexture(loader.loadTexture("box")));
         TexturedModel bobble = new TexturedModel(OBJLoader.loadObjModel("lowPolyTree", loader), new ModelTexture(loader.loadTexture("lowPolyTree")));
-        //TexturedModel lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
+        TexturedModel lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 
         ModelTexture fernTexture = new ModelTexture(loader.loadTexture("fern"));
         fernTexture.setNumberOfRows(2);
@@ -65,14 +65,43 @@ public class MainGameLoop {
         fern.getTexture().setUseFakeLighting(false);
         fern.getTexture().setReflectivity(0);
 
+        lamp.getTexture().setReflectivity(0);
+        lamp.getTexture().setUseFakeLighting(true);
+        lamp.getTexture().setHasTransparency(true);
+        List <Light> lights = new ArrayList<Light>();
+        lights.add(new Light(new Vector3f(0,1000,-7000), new Vector3f(0.4f,0.4f,0.4f))); // main sun light
+
         List<Entity> entities = new ArrayList<Entity>();
+
+        float x=0, y=0, z=0;
+
+        x = 400;
+        z = -490;
+        y = terrain.getHeightOfTerrain(x, z);
+        float yOffset = 15; // this is approximately the height of the lamp post which we add to the height of the light
+
+        entities.add(new Entity(lamp, new Vector3f(x, y, z), 0, 0, 0, 1));
+        lights.add(new Light(new Vector3f(x, y+yOffset, z), new Vector3f(2, 0, 0), new Vector3f(1.0f, 0.01f, 0.002f)));
+
+        x = +490;
+        z = -400-60;
+        y = terrain.getHeightOfTerrain(x, z);
+        entities.add(new Entity(lamp, new Vector3f(x, y, z), 0, 0, 0, 1));
+        lights.add(new Light(new Vector3f(x, y+yOffset, z), new Vector3f(2, 2, 0), new Vector3f(1.0f, 0.01f, 0.002f)));
+
+        x = +490;
+        z = -350;
+        y = terrain.getHeightOfTerrain(x, z);
+        entities.add(new Entity(lamp, new Vector3f(x, y, z), 0, 0, 0, 1));
+        lights.add(new Light(new Vector3f(x, y+yOffset, z), new Vector3f(0, 2, 0), new Vector3f(1.0f, 0.01f, 0.002f)));
+
         Random random = new Random();
 
         for (int i = 0; i < 100; i++) {
             if (i % 7 == 0) {
-                float x = random.nextFloat() * 800;
-                float z = random.nextFloat() * -600;
-                float y = terrain.getHeightOfTerrain(x, z);
+                x = random.nextFloat() * 800;
+                z = random.nextFloat() * -600;
+                y = terrain.getHeightOfTerrain(x, z);
 
                 entities.add(new Entity(bobble, new Vector3f(x, y, z), 0, random.nextFloat() * 360, 0, 0.9f));
 
@@ -84,10 +113,6 @@ public class MainGameLoop {
             }
 
             if (i % 3 == 0) {
-                float x = random.nextFloat() * 800;
-                float z = random.nextFloat() * -600;
-                float y = terrain.getHeightOfTerrain(x, z);
-
                 x = random.nextFloat() * 800;
                 z = random.nextFloat() * -600;
                 y = terrain.getHeightOfTerrain(x, z);
@@ -99,33 +124,31 @@ public class MainGameLoop {
                 y = terrain.getHeightOfTerrain(x, z)+5;
 
                 entities.add(new Entity(box, new Vector3f(x, y, z), 0, 0, 0, random.nextFloat() * 1 + 4));
+
             }
+
         }
 
         MasterRenderer renderer = new MasterRenderer();
 
-        List <Light> lights = new ArrayList<Light>();
-        lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1,1,1)));
-        lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(10,0,0)));
-        lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0,0,10)));
 
         TexturedModel avatar = new TexturedModel(OBJLoader.loadObjModel("player",  loader), new ModelTexture(loader.loadTexture("playerTexture")));
-
-
 
         Player player = new Player(avatar, new Vector3f(400,0,-400), 0,180,0,1);
         Camera camera = new Camera(player);
 
-        List<GuiTexture> guis = new ArrayList<GuiTexture>();
-        GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-        GuiTexture gui2 = new GuiTexture(loader.loadTexture("thinmatrix"), new Vector2f(0.30f, 0.58f), new Vector2f(0.4f, 0.4f));
-        GuiTexture gui3 = new GuiTexture(loader.loadTexture("health"), new Vector2f(-0.74f, 0.925f), new Vector2f(0.25f, 0.25f));
-        guis.add(gui);
-        guis.add(gui2);
-        guis.add(gui3);
+        //List<GuiTexture> guis = new ArrayList<GuiTexture>();
+        //GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+        //GuiTexture gui2 = new GuiTexture(loader.loadTexture("thinmatrix"), new Vector2f(0.30f, 0.58f), new Vector2f(0.4f, 0.4f));
+        //GuiTexture gui3 = new GuiTexture(loader.loadTexture("health"), new Vector2f(-0.74f, 0.925f), new Vector2f(0.25f, 0.25f));
+        //guis.add(gui);
+        //guis.add(gui2);
+        //guis.add(gui3);
 
 
-        GuiRenderer guiRenderer = new GuiRenderer(loader);
+
+
+        //GuiRenderer guiRenderer = new GuiRenderer(loader);
 
         while(!Display.isCloseRequested()) {
             camera.move();
@@ -137,11 +160,11 @@ public class MainGameLoop {
                 renderer.processEntity(entity);
             }
             renderer.render(lights, camera);
-            guiRenderer.render(guis);
+            //guiRenderer.render(guis);
             DisplayManager.updateDisplay();
         }
 
-        guiRenderer.cleanUp();
+        //guiRenderer.cleanUp();
         renderer.cleanUp();
         loader.cleanUp();
 
